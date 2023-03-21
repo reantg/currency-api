@@ -1,0 +1,48 @@
+version: "3.1"
+
+networks:
+  net:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:15.1
+    environment:
+      POSTGRES_DB: currency
+      POSTGRES_USER: currency
+      POSTGRES_PASSWORD: password
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    container_name: 'postgres'
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U currency -d currency" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - net
+
+  app:
+    container_name: app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./:/home
+    ports:
+      - "8989:8989"
+    depends_on:
+      - postgres
+    networks:
+      - net

@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+bin
+config.yml
+vendor-proto
+pgdata
+zzz_*
