@@ -30,6 +30,7 @@ const (
 )
 
 func (r *CurrencyPairRepository) List(ctx context.Context) ([]*domain.CurrencyPair, error) {
+	// TODO raw sql
 	query := r.pgBuilder.Select("id", "currency_from", "currency_to", "well", "updated_at").
 		From(currencyPairsTable)
 	rawSql, args, err := query.ToSql()
@@ -84,6 +85,12 @@ func (r *CurrencyPairRepository) Update(ctx context.Context, currencyFrom string
 }
 
 func (r *CurrencyPairRepository) Get(ctx context.Context, currencyFrom string, currencyTo string) (*domain.CurrencyPair, error) {
+	//	query := `
+	//select id
+	//from currency
+	//where true
+	//
+
 	query := r.pgBuilder.Select("id", "currency_from", "currency_to", "well", "updated_at").
 		From(currencyPairsTable).
 		Where(sq.Or{

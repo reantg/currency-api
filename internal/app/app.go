@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"errors"
-
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -83,7 +82,9 @@ func (a *App) init(ctx context.Context) error {
 }
 
 func (a *App) Run(ctx context.Context) error {
+	// TODO: shuttdown
 	defer a.dbPool.Close()
+
 	a.updater.Run(ctx)
 
 	err := a.router.Listen(config.ConfigData.Port)

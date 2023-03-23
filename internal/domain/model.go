@@ -18,9 +18,9 @@ type RatesApiClient interface {
 
 type CurrencyPairRepo interface {
 	List(ctx context.Context) ([]*CurrencyPair, error)
-	Get(ctx context.Context, currencyFrom string, currencyTo string) (*CurrencyPair, error)
-	Add(ctx context.Context, currencyFrom string, currencyTo string, well float64) error
-	Update(ctx context.Context, currencyFrom string, currencyTo string, well float64) error
+	Get(ctx context.Context, from, to string) (*CurrencyPair, error)
+	Add(ctx context.Context, pair CurrencyPair) error
+	Update(ctx context.Context, pair CurrencyPair) error
 }
 
 type Model struct {

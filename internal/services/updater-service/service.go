@@ -8,6 +8,11 @@ import (
 	"github.com/reantg/currency-api/internal/domain"
 )
 
+//  Сделать по следующей схеме
+//wg := worker.New(Config{})
+//wg.Async(ctx, "rates", func(ctx context.Context) error {})
+//wg.Async(ctx, "auth-checker", func(ctx context.Context) error {})
+
 type Updater interface {
 	Run(ctx context.Context)
 }
@@ -31,23 +36,25 @@ func (u *updater) Run(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-u.ticker.C:
-				u.updatePairs(ctx)
+				if err := u.updatePairs(ctx); err != nil {
+					log.Println(err)
+				}
 			}
 		}
 	}()
 }
 
-func (u *updater) updatePairs(ctx context.Context) {
+func (u *updater) updatePairs(ctx context.Context) error {
 	pairs, err := u.businessLogic.List(ctx)
 	if err != nil {
-		log.Println("cannot get pairs list err", err)
-		return
+		return err
 	}
 
 	for _, pair := range pairs {
 		err := u.businessLogic.Update(ctx, pair.CurrencyFrom, pair.CurrencyTo)
 		if err != nil {
-			log.Println("cannot update pair err", err)
+			return err
 		}
 	}
+	return nil
 }
