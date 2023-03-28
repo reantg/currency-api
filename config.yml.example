@@ -1,4 +1,5 @@
 port: :50052
 dbUri: postgres://user:password@localhost:5432/currency?sslmode=disable
 openexchangeratesApiKey: 
-openexchangeratesUrl: 
+openexchangeratesUrl:
+forceShutdownTimeout:

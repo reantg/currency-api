@@ -11,15 +11,20 @@ type Config struct {
 	DbUri                   string `yaml:"dbUri"`
 	OpenexchangeratesApiKey string `yaml:"openexchangeratesApiKey"`
 	OpenexchangeratesUrl    string `yaml:"openexchangeratesUrl"`
+	ForceShutdownTimeout    int    `yaml:"forceShutdownTimeout"`
 }
 
-var ConfigData Config
+func Init() (*Config, error) {
 
-func Init() error {
 	rawYaml, err := os.Open("config.yml")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return yaml.NewDecoder(rawYaml).Decode(ConfigData)
+	configData := Config{}
+	err = yaml.NewDecoder(rawYaml).Decode(&configData)
+	if err != nil {
+		return nil, err
+	}
+	return &configData, nil
 }

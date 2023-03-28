@@ -3,7 +3,8 @@ package openexchange
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"github.com/pkg/errors"
+	"go.uber.org/multierr"
 	"net/http"
 )
 
@@ -30,12 +31,16 @@ func (c *Client) Latest(ctx context.Context, currencyFrom string, currencyTo str
 	if err != nil {
 		return 0, err
 	}
-	// TODO multierr
-	defer httpResp.Body.Close()
+
+	defer func() {
+		closeErr := httpResp.Body.Close()
+		if err != nil && closeErr == nil {
+			err = multierr.Combine(closeErr, err)
+		}
+	}()
 
 	if httpResp.StatusCode != http.StatusOK {
-		// TODO pkg errors
-		return 0, fmt.Errorf("status code not ok, status code = %d", httpResp.StatusCode)
+		return 0, errors.Errorf("status code not ok, status code = %d", httpResp.StatusCode)
 	}
 
 	var resp Response
@@ -46,7 +51,7 @@ func (c *Client) Latest(ctx context.Context, currencyFrom string, currencyTo str
 
 	rate, ok := resp.Rates[currencyTo]
 	if !ok {
-		return 0, fmt.Errorf("currency pair dont exists")
+		return 0, errors.Errorf("currency pair dont exists")
 	}
 
 	return rate, nil
