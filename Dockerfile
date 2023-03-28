@@ -8,5 +8,5 @@ RUN go mod download
 
 COPY . ./
 
-RUN GOOS=linux go build -o ./app ./cmd/app/main.go
-CMD ["./app"]
+RUN GOOS=linux go build -o ./api ./cmd/api/
+CMD ["./api"]

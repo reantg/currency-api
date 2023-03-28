@@ -1,4 +1,4 @@
-package openexchangerates
+package openexchange
 
 type Client struct {
 	apiKey    string

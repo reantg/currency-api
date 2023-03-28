@@ -6,25 +6,25 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type ConfigStruct struct {
+type Config struct {
 	Port                    string `yaml:"port"`
 	DbUri                   string `yaml:"dbUri"`
 	OpenexchangeratesApiKey string `yaml:"openexchangeratesApiKey"`
 	OpenexchangeratesUrl    string `yaml:"openexchangeratesUrl"`
+	ForceShutdownTimeout    int    `yaml:"forceShutdownTimeout"`
 }
 
-var ConfigData ConfigStruct
+func Init() (*Config, error) {
 
-func Init() error {
-	rawYaml, err := os.ReadFile("config.yml")
+	rawYaml, err := os.Open("config.yml")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = yaml.Unmarshal(rawYaml, &ConfigData)
+	configData := Config{}
+	err = yaml.NewDecoder(rawYaml).Decode(&configData)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	return nil
+	return &configData, nil
 }
